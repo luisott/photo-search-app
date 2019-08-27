@@ -20,6 +20,7 @@ const TilesContainerWrapper = StyledComponents.div`
     flex-wrap: wrap;
     width: 100%;
     align-content: center;
+}
 `;
 
 const ColumnsContainer = StyledComponents.div`

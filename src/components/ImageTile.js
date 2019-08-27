@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from "prop-types";
 import StyledComponents from 'styled-components';
+import ImageStats from "./ImageStats";
 
 export const MARGIN_PX = 10;
 
@@ -14,6 +15,18 @@ const TileContainer = StyledComponents.div`
 
 const ImageElement = StyledComponents.img`
     width: 100%;
+`;
+
+const StatsContainer = StyledComponents.div`
+    position: absolute;
+    height: 100%;
+    width: calc(100% - 40px);
+    background-color: white;
+    opacity: 0.9;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 `;
 
 const props = {
@@ -57,10 +70,32 @@ const defaultProps = {
 
 
 const ImageTile = ({imageProps, width}) => {
-    const {urls} = imageProps;
+
+    const [statsShown, setStatsShown] = useState(false);
+
+    useEffect(() => {
+        if (statsShown) {
+
+        }
+    }, [statsShown]);
+
+    const handleTileClick = () => {
+        setStatsShown(!statsShown);
+    };
+
+    const {urls, id} = imageProps;
     return (
-        <TileContainer width={width}>
-           <ImageElement src={urls.regular}/>
+        <TileContainer
+            width={width}
+            onClick={handleTileClick}
+        >
+            {
+                statsShown &&
+                <StatsContainer>
+                    <ImageStats id={id}/>
+                </StatsContainer>
+            }
+            <ImageElement src={urls.regular}/>
         </TileContainer>
     );
 };
