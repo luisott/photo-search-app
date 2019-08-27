@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import StyledComponents from "styled-components";
 import PropTypes from "prop-types";
+import { useTransition, animated } from 'react-spring'
 import {getImages} from "../utils/queries";
 import ImageTile, {MARGIN_PX} from "../components/ImageTile";
 import useMedia from "../hooks/useMedia";
@@ -41,12 +42,18 @@ const TilesContainer = ({searchText}) => {
             Math.round(600 / TILE_HORIZONTAL_SPACE)
         ], 1);
 
+    const transitions = useTransition(images, item => item.id, {
+        from: { opacity: 0, transform: 'scale(0)' },
+        enter: { opacity: 1, transform: 'scale(1)' },
+        leave: { visibility: "hidden" }
+    });
+
     useEffect(() => {
-        fetchDataAndUpdateImages();
+        fetchDataAndUpdateImages(searchText);
     }, [searchText]);
 
-    const fetchDataAndUpdateImages = async () => {
-        const search = getSearchTerm(searchText);
+    const fetchDataAndUpdateImages = async (searchTerm) => {
+        const search = getSearchTerm(searchTerm);
         if (search) {
             try {
                 // TODO: Use total, totalPages
@@ -71,13 +78,15 @@ const TilesContainer = ({searchText}) => {
         <ColumnsContainer>
             <TilesContainerWrapper height={numberColumns > 1 ? getColumnHeightToFitMostTilesForXColumns() : "100%"}>
                 {
-                    images.map((image) => {
-                        return <ImageTile
-                            width={numberColumns > 1 ? `${TILES_WIDTH_NON_MOBILE_PX}px` : null}
-                            key={image.id}
-                            imageProps={image}
-                        />;
-                    })
+                    transitions.map(({ item, props, key }) =>
+                        <animated.div key={key} style={props}>
+                            <ImageTile
+                                width={numberColumns > 1 ? `${TILES_WIDTH_NON_MOBILE_PX}px` : null}
+                                key={item.key}
+                                imageProps={item}
+                            />
+                        </animated.div>
+                    )
                 }
             </TilesContainerWrapper>
         </ColumnsContainer>
