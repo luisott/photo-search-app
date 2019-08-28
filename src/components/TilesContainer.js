@@ -107,7 +107,7 @@ const TilesContainer = ({searchText}) => {
         const tilesHeightForWidth = listOfImages.map((image) => TILES_WIDTH_NON_MOBILE_PX * image.item.height / image.item.width);
         const totalHeight = tilesHeightForWidth.reduce((accumulator, value) => accumulator + value + MARGIN_PX * 2, 0);
         // This 400 magic number seems to work good to distribute tiles evenlyish
-        return `${totalHeight / (numberColumns) + 300}px`;
+        return `${totalHeight / (numberColumns) + 400}px`;
     };
 
     const renderPageOfTiles = (page) => {

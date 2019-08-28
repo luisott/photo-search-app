@@ -14,10 +14,11 @@ export const AppWrapper = StyledComponents.div`
 `;
 
 const props = {
-    match: PropTypes.object.isRequired
+    match: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired
 };
 
-const App = ({match}) => {
+const App = ({match, history}) => {
 
     const [searchTerm, setSearchTerm] = useState(match.params[Routes.SEARCH_PARAM]);
 
@@ -31,8 +32,8 @@ const App = ({match}) => {
     });
 
     const handleSearchClick = async (searchTerm) => {
-        // TODO: Update route
         setSearchTerm(searchTerm);
+        history.replace(searchTerm);
     };
 
     return (
