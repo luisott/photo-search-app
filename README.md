@@ -1,3 +1,6 @@
+## photo-search-app
+Search for photos in https://unsplash.com and see image statistics like like, downloads and views in the last 30 days.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
