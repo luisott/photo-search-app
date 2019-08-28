@@ -13,7 +13,7 @@ const SearchFieldContainer = StyledComponents.div`
     margin: 20px 10px;
 `;
 
-const SearchField = StyledComponents(TextField)`
+export const SearchField = StyledComponents(TextField)`
     width: 100%;
     max-width: 600px;
 `;
@@ -33,7 +33,7 @@ const SearchBar = ({searchParam, onSearchClick}) => {
     };
 
     const handleSearchClick = () => {
-        onSearchClick(searchText);
+        onSearchClick && onSearchClick(searchText);
     };
 
     return (

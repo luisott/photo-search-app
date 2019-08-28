@@ -5,3 +5,4 @@ export const DOCUMENT_TITLE_WITH_SEARCH = (searchTerm) => `Search results for ${
 export const DOWNLOADS = "Downloads";
 export const VIEWS = "Views";
 export const LIKES = "Likes";
+export const NO_RESULT_FOUND = (searchTerm) => `Nothing found for search ${searchTerm}`;

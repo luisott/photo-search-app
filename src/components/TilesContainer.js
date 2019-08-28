@@ -7,6 +7,8 @@ import InfiniteScroll from 'react-infinite-scroller';
 import {getImages} from "../utils/queries";
 import ImageTile, {MARGIN_PX} from "../components/ImageTile";
 import useMedia from "../hooks/useMedia";
+import * as UIStrings from "../utils/uiStrings";
+
 
 const TILES_WIDTH_NON_MOBILE_PX = 400;
 const TILE_HORIZONTAL_SPACE = MARGIN_PX + TILES_WIDTH_NON_MOBILE_PX;
@@ -14,6 +16,7 @@ const MIN_LARGE_SIZE_PX = 1400; // Less than this will be 3 columns or less
 const MIN_MEDIUM_SIZE_PX = 850; // Less than this will be 2 columns or less
 const MIN_SMALL_SIZE_PX = 550; // // Less than this will be 1 column
 const IMAGES_PER_PAGE = 20;
+const LAZY_LOADER_HEIGHT_PX = 200;
 
 const COLUMNS_FOR_LARGE_SIZE = Math.floor(MIN_LARGE_SIZE_PX / TILE_HORIZONTAL_SPACE);
 const COLUMNS_FOR_MEDIUM_SIZE = Math.floor(MIN_MEDIUM_SIZE_PX / TILE_HORIZONTAL_SPACE);
@@ -23,7 +26,7 @@ const getSearchTerm = (searchText) => {
     return searchText && searchText.trim() !== "" ? searchText : null;
 };
 
-const TilesContainerWrapper = StyledComponents.div`
+export const TilesContainerWrapper = StyledComponents.div`
     display: flex;
     flex-direction: column;
     height: ${({height}) => height};
@@ -38,10 +41,18 @@ const ColumnsContainer = StyledComponents.div`
     flex-direction: column;
 `;
 
-const CenteredLoading = StyledComponents.div`
+export const CenteredLoading = StyledComponents.div`
+    align-items: center;
     display: flex;
     justify-content: center;
     height: ${({height}) => height ? height + "px" : "100%"};
+`;
+
+const NoResultsFoundWrapper = StyledComponents.div`
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const props = {
@@ -51,15 +62,11 @@ const props = {
 const TilesContainer = ({searchText}) => {
 
     const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [totalImages, setTotalImages] = useState(0);
-
-    console.log(`Large=${COLUMNS_FOR_LARGE_SIZE}, Medium=${COLUMNS_FOR_MEDIUM_SIZE}, Small=${COLUMNS_FOR_SMALL_SIZE}`);
-
     const numberColumns = useMedia(
         [`(min-width: ${MIN_LARGE_SIZE_PX}px)`, `(min-width: ${MIN_MEDIUM_SIZE_PX}px)`, `(min-width: ${MIN_SMALL_SIZE_PX}px)`],
         [COLUMNS_FOR_LARGE_SIZE, COLUMNS_FOR_MEDIUM_SIZE, COLUMNS_FOR_SMALL_SIZE], 1);
-
-    console.log(`numColumns=${numberColumns}`);
 
     const transitions = useTransition(Object.values(images), item => item.id, {
         from: { opacity: 0, transform: 'scale(0)' },
@@ -73,16 +80,16 @@ const TilesContainer = ({searchText}) => {
 
     const fetchDataAndUpdateImages = async (searchTerm, page = 1) => {
         const search = getSearchTerm(searchTerm);
+
         if (search) {
             try {
-                // TODO: Use total, totalPages
                 const {results, total} = await getImages(search, IMAGES_PER_PAGE, page);
                 if (page > 1) {
                     setImages([...images, ...results]);
                 } else {
                     setImages(results);
                 }
-
+                setLoading(false);
                 setTotalImages(total);
             } catch (e) {
                 // TODO: Handle error
@@ -99,9 +106,7 @@ const TilesContainer = ({searchText}) => {
     };
 
     const renderPageOfTiles = (page) => {
-        debugger;
         const imagesToShowInPage = transitions.slice(page * IMAGES_PER_PAGE, page * IMAGES_PER_PAGE + IMAGES_PER_PAGE);
-        console.log(`imagesToShowInPage=${imagesToShowInPage.length}`);
         return (
             <TilesContainerWrapper
                 key={page}
@@ -123,25 +128,33 @@ const TilesContainer = ({searchText}) => {
         );
     };
 
-    const renderLoader = () => {
+    const renderLoader = (height) => {
         return (
-            <CenteredLoading height={200}>
+            <CenteredLoading height={height}>
                 <CircularProgress/>
             </CenteredLoading>
         )
     };
 
-    // TODO: Show a no results to show
-    const pagesToIterateTrough = [...Array(Math.ceil(images.length / IMAGES_PER_PAGE))];
+    const currentPagesShown =  Math.ceil(images.length / IMAGES_PER_PAGE);
+    const pagesToIterateTrough = [...Array(currentPagesShown)];
     const pageOfTiles = pagesToIterateTrough.map((element, index) => renderPageOfTiles(index));
-    debugger;
+
+    if (loading) {
+        return renderLoader();
+    }
+    if (getSearchTerm(searchText) && images.length === 0) {
+        return (
+            <NoResultsFoundWrapper>{UIStrings.NO_RESULT_FOUND(searchText)}</NoResultsFoundWrapper>
+        );
+    }
     return (
         <InfiniteScroll
-            initialLoad={false}
+            initialLoad={true}
             pageStart={0}
-            loadMore={(page) => fetchDataAndUpdateImages(searchText, page + 1)}
+            loadMore={() => fetchDataAndUpdateImages(searchText, currentPagesShown + 1)}
             hasMore={images.length < totalImages}
-            loader={renderLoader()}
+            loader={renderLoader(LAZY_LOADER_HEIGHT_PX)}
         >
             <ColumnsContainer>
                 {pageOfTiles}

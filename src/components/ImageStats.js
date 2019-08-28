@@ -37,13 +37,13 @@ const viewsColors = {
     borderWidth: 1
 };
 
-const CenteredLoading = StyledComponents.div`
+export const CenteredLoading = StyledComponents.div`
     display: flex;
     justify-content: center;
 `;
 
 const props = {
-    id: PropTypes.string
+    id: PropTypes.string.isRequired
 };
 
 const ImageStats = ({id}) => {
@@ -66,8 +66,8 @@ const ImageStats = ({id}) => {
         }
     };
 
-    // TODO: Add string definitions
     const {downloads, likes, views} = stats;
+
     if (downloads && likes && views) {
         const dataToShow = {
             labels: downloads.historical.values.map(({date}) => date),
