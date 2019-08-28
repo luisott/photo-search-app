@@ -53,7 +53,7 @@ export const CenteredLoading = StyledComponents.div`
     height: ${({height}) => height ? height + "px" : "100%"};
 `;
 
-const NoResultsFoundWrapper = StyledComponents.div`
+const CenteredMessageWrapper = StyledComponents.div`
     height: 100%;
     display: flex;
     justify-content: center;
@@ -145,12 +145,17 @@ const TilesContainer = ({searchText}) => {
     const pagesToIterateTrough = [...Array(currentPagesShown)];
     const pageOfTiles = pagesToIterateTrough.map((element, index) => renderPageOfTiles(index));
 
+    if (!getSearchTerm(searchText)) {
+        return (
+            <CenteredMessageWrapper>{UIStrings.SEARCH_FOR_SOMETHING}</CenteredMessageWrapper>
+        );
+    }
     if (loading) {
         return renderLoader();
     }
     if (getSearchTerm(searchText) && images.length === 0) {
         return (
-            <NoResultsFoundWrapper>{UIStrings.NO_RESULT_FOUND(searchText)}</NoResultsFoundWrapper>
+            <CenteredMessageWrapper>{UIStrings.NO_RESULT_FOUND(searchText)}</CenteredMessageWrapper>
         );
     }
     return (
