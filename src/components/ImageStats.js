@@ -1,7 +1,11 @@
 import React, {useState, useEffect} from "react";
 import PropTypes from "prop-types";
-import {getImageStatistics} from "../utils/queries";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import StyledComponents from "styled-components";
 import { Line } from 'react-chartjs-2';
+import {getImageStatistics} from "../utils/queries";
+import * as UIStrings from "../utils/uiStrings";
+
 
 const downloadsColors = {
     backgroundColor: [
@@ -33,7 +37,10 @@ const viewsColors = {
     borderWidth: 1
 };
 
-
+const CenteredLoading = StyledComponents.div`
+    display: flex;
+    justify-content: center;
+`;
 
 const props = {
     id: PropTypes.string
@@ -65,15 +72,15 @@ const ImageStats = ({id}) => {
         const dataToShow = {
             labels: downloads.historical.values.map(({date}) => date),
             datasets: [{
-                label: 'Downloads',
+                label: UIStrings.DOWNLOADS,
                 data: downloads.historical.values.map(({value}) => value),
                 ...downloadsColors
             },{
-                label: 'Views',
+                label: UIStrings.VIEWS,
                 data: views.historical.values.map(({value}) => value),
                 ...viewsColors
             },{
-                label: 'Likes',
+                label: UIStrings.LIKES,
                 data: likes.historical.values.map(({value}) => value),
                 ...likesColors
             }],
@@ -86,25 +93,17 @@ const ImageStats = ({id}) => {
                         bottom: 0
                     }
                 }
-            },
-            // options: {
-            //     scales: {
-            //         xAxes: [{
-            //             type: 'time',
-            //             bounds: 'ticks',
-            //             time: {
-            //                 unit: 'month'
-            //             }
-            //         }]
-            //     }
-            // }
+            }
         };
         return (
             <Line data={dataToShow}/>
         );
     } else {
-        // Return a no data to show or something
-        return (<div>adasd</div>)
+        return (
+            <CenteredLoading>
+                <CircularProgress/>
+            </CenteredLoading>
+        )
     }
 
 };

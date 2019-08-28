@@ -1,6 +1,6 @@
-export async function getImages(searchTerm = "", page, maxResults)
+export async function getImages(searchTerm = "", maxResults = 20, page = 0)
 {
-    const response = await fetch(`/search?query=${searchTerm}`);
+    const response = await fetch(`/search?query=${searchTerm}&page=${page}&per_page=${maxResults}`);
     const json = await response.json();
     return json.photos;
 }
