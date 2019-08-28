@@ -10,7 +10,7 @@ import * as UIStrings from "../utils/uiStrings";
 const SearchFieldContainer = StyledComponents.div`
     display: flex;
     justify-content: center;
-    margin: 20px 10px;
+    padding: 20px 10px;
 `;
 
 export const SearchField = StyledComponents(TextField)`

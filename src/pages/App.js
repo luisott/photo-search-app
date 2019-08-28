@@ -10,6 +10,7 @@ export const AppWrapper = StyledComponents.div`
     height: 100%;
     flex-direction: column;
     display: flex;
+    overflow: hidden;
 `;
 
 const props = {

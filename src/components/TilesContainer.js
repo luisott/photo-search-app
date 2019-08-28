@@ -39,6 +39,11 @@ export const TilesContainerWrapper = StyledComponents.div`
 const ColumnsContainer = StyledComponents.div`
     display: flex;
     flex-direction: column;
+    overflow: auto;
+`;
+
+const ScrollArea = StyledComponents.div`
+    overflow: auto;
 `;
 
 export const CenteredLoading = StyledComponents.div`
@@ -149,17 +154,19 @@ const TilesContainer = ({searchText}) => {
         );
     }
     return (
-        <InfiniteScroll
-            initialLoad={true}
-            pageStart={0}
-            loadMore={() => fetchDataAndUpdateImages(searchText, currentPagesShown + 1)}
-            hasMore={images.length < totalImages}
-            loader={renderLoader(LAZY_LOADER_HEIGHT_PX)}
-        >
-            <ColumnsContainer>
-                {pageOfTiles}
-            </ColumnsContainer>
-        </InfiniteScroll>
+        <ScrollArea>
+            <InfiniteScroll
+                initialLoad={true}
+                pageStart={0}
+                loadMore={() => fetchDataAndUpdateImages(searchText, currentPagesShown + 1)}
+                hasMore={images.length < totalImages}
+                loader={renderLoader(LAZY_LOADER_HEIGHT_PX)}
+            >
+                <ColumnsContainer>
+                    {pageOfTiles}
+                </ColumnsContainer>
+            </InfiniteScroll>
+        </ScrollArea>
     );
 };
 TilesContainer.props = props;
