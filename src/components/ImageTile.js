@@ -1,7 +1,11 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
 import StyledComponents from 'styled-components';
+import Button from "@material-ui/core/Button";
 import ImageStats from "./ImageStats";
+import useHover from "../hooks/useHover";
+import * as UIStrings from "../utils/uiStrings";
+
 
 export const MARGIN_PX = 10;
 
@@ -23,6 +27,18 @@ export const StatsContainer = StyledComponents.div`
     width: calc(100% - 40px);
     background-color: white;
     opacity: 0.9;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`;
+
+const HoverContainer = StyledComponents.div`
+    position: absolute;
+    height: 100%;
+    width: calc(100% - 40px);
+    background-color: white;
+    opacity: 0.7;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -72,6 +88,7 @@ const defaultProps = {
 const ImageTile = ({imageProps, width}) => {
 
     const [statsShown, setStatsShown] = useState(false);
+    const [hoverRef, hovered] = useHover();
 
     const handleTileClick = () => {
         setStatsShown(!statsShown);
@@ -80,6 +97,7 @@ const ImageTile = ({imageProps, width}) => {
     const {urls, id} = imageProps;
     return (
         <TileContainer
+            ref={hoverRef}
             width={width}
             onClick={handleTileClick}
         >
@@ -88,6 +106,17 @@ const ImageTile = ({imageProps, width}) => {
                 <StatsContainer>
                     <ImageStats id={id}/>
                 </StatsContainer>
+            }
+            {
+                hovered && !statsShown &&
+                <HoverContainer>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                    >
+                        {UIStrings.CLICK_ON_IMAGE_TO_SEE_STATS}
+                    </Button>
+                </HoverContainer>
             }
             <ImageElement src={urls.regular}/>
         </TileContainer>

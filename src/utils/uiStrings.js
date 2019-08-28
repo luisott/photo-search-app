@@ -7,3 +7,4 @@ export const VIEWS = "Views";
 export const LIKES = "Likes";
 export const NO_RESULT_FOUND = (searchTerm) => `Nothing found for search ${searchTerm}`;
 export const SEARCH_FOR_SOMETHING = "Type a search filter using the text field above and click SEARCH";
+export const CLICK_ON_IMAGE_TO_SEE_STATS = "Click on image to see its stats";
