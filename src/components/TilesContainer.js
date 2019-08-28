@@ -156,6 +156,7 @@ const TilesContainer = ({searchText}) => {
     return (
         <ScrollArea>
             <InfiniteScroll
+                useWindow={false}
                 initialLoad={true}
                 pageStart={0}
                 loadMore={() => fetchDataAndUpdateImages(searchText, currentPagesShown + 1)}
