@@ -44,6 +44,12 @@ const SearchBar = ({searchParam, onSearchClick}) => {
                 label={UIStrings.SEARCH_LABEL}
                 value={searchText}
                 onChange={handleChange}
+                onKeyPress={(ev) => {
+                    if (ev.key === 'Enter') {
+                        ev.preventDefault();
+                        handleSearchClick()
+                    }
+                }}
                 InputProps={{
                     endAdornment: (
                         <InputAdornment position="end">
