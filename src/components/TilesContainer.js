@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import StyledComponents from "styled-components";
 import PropTypes from "prop-types";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { useTransition, animated } from 'react-spring';
 import InfiniteScroll from 'react-infinite-scroller';
 import {getImages} from "../utils/queries";
 import ImageTile, {MARGIN_PX} from "../components/ImageTile";
@@ -73,12 +72,6 @@ const TilesContainer = ({searchText}) => {
         [`(min-width: ${MIN_LARGE_SIZE_PX}px)`, `(min-width: ${MIN_MEDIUM_SIZE_PX}px)`, `(min-width: ${MIN_SMALL_SIZE_PX}px)`],
         [COLUMNS_FOR_LARGE_SIZE, COLUMNS_FOR_MEDIUM_SIZE, COLUMNS_FOR_SMALL_SIZE], 1);
 
-    const transitions = useTransition(Object.values(images), item => item.id, {
-        from: { opacity: 0, transform: 'scale(0)' },
-        enter: { opacity: 1, transform: 'scale(1)' },
-        leave: { visibility: "hidden" }
-    });
-
     useEffect(() => {
         fetchDataAndUpdateImages(searchText);
     }, [searchText]);
@@ -104,14 +97,14 @@ const TilesContainer = ({searchText}) => {
     };
 
     const getColumnHeightToFitMostTilesForXColumns = (listOfImages) => {
-        const tilesHeightForWidth = listOfImages.map((image) => TILES_WIDTH_NON_MOBILE_PX * image.item.height / image.item.width);
+        const tilesHeightForWidth = listOfImages.map((image) => TILES_WIDTH_NON_MOBILE_PX * image.height / image.width);
         const totalHeight = tilesHeightForWidth.reduce((accumulator, value) => accumulator + value + MARGIN_PX * 2, 0);
         // This 400 magic number seems to work good to distribute tiles evenlyish
         return `${totalHeight / (numberColumns) + 400}px`;
     };
 
     const renderPageOfTiles = (page) => {
-        const imagesToShowInPage = transitions.slice(page * IMAGES_PER_PAGE, page * IMAGES_PER_PAGE + IMAGES_PER_PAGE);
+        const imagesToShowInPage = images.slice(page * IMAGES_PER_PAGE, page * IMAGES_PER_PAGE + IMAGES_PER_PAGE);
         return (
             <TilesContainerWrapper
                 key={page}
@@ -119,14 +112,12 @@ const TilesContainer = ({searchText}) => {
             >
                 {
                     imagesToShowInPage
-                        .map(({ item, props, key }) =>
-                            <animated.div key={key} style={props}>
-                                <ImageTile
-                                    width={numberColumns > 1 ? `${TILES_WIDTH_NON_MOBILE_PX}px` : null}
-                                    key={item.key}
-                                    imageProps={item}
-                                />
-                            </animated.div>
+                        .map((image) =>
+                            <ImageTile
+                                width={numberColumns > 1 ? `${TILES_WIDTH_NON_MOBILE_PX}px` : null}
+                                key={image.id}
+                                imageProps={image}
+                            />
                         )
                 }
             </TilesContainerWrapper>

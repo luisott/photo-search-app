@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
-import StyledComponents from 'styled-components';
+import StyledComponents, { keyframes } from 'styled-components';
 import Button from "@material-ui/core/Button";
 import ImageStats from "./ImageStats";
 import useHover from "../hooks/useHover";
@@ -15,34 +15,61 @@ const TileContainer = StyledComponents.div`
     cursor: pointer;
     height: fit-content;
     margin: ${MARGIN_PX}px;
+    position: relative;
+`;
+
+export const ImgAnimatedKeyFrame = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+export const TileOverlayAnimatedKeyFrame = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.7;
+  }
 `;
 
 export const ImageElement = StyledComponents.img`
     width: 100%;
+    animation: ${ImgAnimatedKeyFrame} 0.2s linear;
 `;
 
 export const StatsContainer = StyledComponents.div`
     position: absolute;
     height: 100%;
-    width: calc(100% - 40px);
+    width: 100%;
     background-color: white;
-    opacity: 0.9;
-    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    opacity: 0.9;
 `;
 
 const HoverContainer = StyledComponents.div`
-    position: absolute;
+     position: absolute;
     height: 100%;
-    width: calc(100% - 40px);
+    width: 100%;
     background-color: white;
-    opacity: 0.7;
-    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    animation: ${TileOverlayAnimatedKeyFrame} 0.3s linear;
+    opacity: 0.7;
+`;
+
+const StyledButton = StyledComponents(Button)`
+    width: 300px;
 `;
 
 const props = {
@@ -110,12 +137,12 @@ const ImageTile = ({imageProps, width}) => {
             {
                 hovered && !statsShown &&
                 <HoverContainer>
-                    <Button
+                    <StyledButton
                         variant="outlined"
                         color="primary"
                     >
                         {UIStrings.CLICK_ON_IMAGE_TO_SEE_STATS}
-                    </Button>
+                    </StyledButton>
                 </HoverContainer>
             }
             <ImageElement src={urls.regular}/>
